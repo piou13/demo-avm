@@ -1,0 +1,84 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "HTTP_User_Assigned_Identity_-_OK": {
+                "type": "Http",
+                "inputs": {
+                    "uri": "@parameters('functionAppEndpoint')",
+                    "method": "POST",
+                    "authentication": {
+                        "type": "ManagedServiceIdentity",
+                        "identity": "@parameters('userAssignedIdentityId')",
+                        "audience": "https://management.azure.com"
+                    }
+                },
+                "runAfter": {},
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                }
+            },
+            "HTTP_System_Assigned_Identity_-_KO": {
+                "type": "Http",
+                "inputs": {
+                    "uri": "@parameters('functionAppEndpoint')",
+                    "method": "POST",
+                    "authentication": {
+                        "type": "ManagedServiceIdentity",
+                        "audience": "https://management.azure.com"
+                    }
+                },
+                "runAfter": {},
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                }
+            },
+            "HTTP_Anonymous_-_KO": {
+                "type": "Http",
+                "inputs": {
+                    "uri": "@parameters('functionAppEndpoint')",
+                    "method": "POST"
+                },
+                "runAfter": {},
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                }
+            },
+            "Terminate": {
+                "type": "Terminate",
+                "inputs": {
+                    "runStatus": "Succeeded"
+                },
+                "runAfter": {
+                    "HTTP_System_Assigned_Identity_-_KO": [
+                        "SUCCEEDED",
+                        "FAILED"
+                    ],
+                    "HTTP_User_Assigned_Identity_-_OK": [
+                        "SUCCEEDED",
+                        "FAILED"
+                    ],
+                    "HTTP_Anonymous_-_KO": [
+                        "SUCCEEDED",
+                        "FAILED"
+                    ]
+                }
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "triggers": {
+            "http": {
+                "type": "Request",
+                "kind": "Http"
+            }
+        }
+    },
+    "kind": "Stateful"
+}

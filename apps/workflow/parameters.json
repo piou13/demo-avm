@@ -1,0 +1,10 @@
+{
+    "userAssignedIdentityId": {
+        "type": "String",
+        "value": "#__userAssignedIdentityId__#"
+    },
+    "functionAppEndpoint": {
+        "type": "String",
+        "value": "#__functionAppEndpoint__#"
+    }
+}
