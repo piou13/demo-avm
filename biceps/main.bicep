@@ -171,7 +171,7 @@ module logicApp 'modules/web/logic-app-standard.bicep' = {
     userAssignedIdentityResourceId: userAssignedIdentity.outputs.resourceId
     authSettingV2Configuration: {
       globalValidation: {
-        requireAuthentication: false
+        requireAuthentication: true
         unauthenticatedClientAction: 'Return401'
       }
       login: {
